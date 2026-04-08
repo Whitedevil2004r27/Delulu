@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import ThreeScene from '../components/ThreeScene';
-import { io } from 'socket.io-client';
 import './globals.css';
 
 export default function Home() {
@@ -14,7 +13,6 @@ export default function Home() {
   
   const revealRefs = useRef([]);
   const audioRef = useRef(null);
-  const socketRef = useRef(null);
 
   useEffect(() => {
     // Autoplay fallback: start music on first screen interaction if native autoplay is blocked
@@ -26,21 +24,25 @@ export default function Home() {
     };
     window.addEventListener('click', playAudio);
 
-    const backendUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3001';
-
-    // Connect to WebSocket Server
-    socketRef.current = io(backendUrl);
-
-    socketRef.current.on('trigger_burst', () => {
-       // Dispatch custom event to ThreeScene
-       window.dispatchEvent(new CustomEvent('burstParticles'));
-    });
+    // HTTP Polling Fallback for Burst Particles
+    let lastKnownBurst = 0;
+    const pollInterval = setInterval(async () => {
+        try {
+            const res = await fetch('/api/burst');
+            if (res.ok) {
+                const data = await res.json();
+                if (data.time > lastKnownBurst && lastKnownBurst !== 0) {
+                    window.dispatchEvent(new CustomEvent('burstParticles'));
+                }
+                if (data.time > 0) lastKnownBurst = data.time;
+            }
+        } catch(e) {}
+    }, 3000);
 
     // Fetch letter content and memories
-    const backendUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3001';
     Promise.all([
-      fetch(`${backendUrl}/api/letter`).then(res => res.json()),
-      fetch(`${backendUrl}/api/memories`).then(res => res.json())
+      fetch('/api/letter').then(res => res.json()),
+      fetch('/api/memories').then(res => res.json())
     ])
     .then(([letterData, memoriesData]) => {
       setContent(letterData);
@@ -53,7 +55,7 @@ export default function Home() {
     });
 
     return () => {
-      if (socketRef.current) socketRef.current.disconnect();
+      clearInterval(pollInterval);
     };
   }, []);
 
@@ -86,9 +88,8 @@ export default function Home() {
     window.dispatchEvent(new CustomEvent('burstParticles', { detail: { massive: true } }));
     
     // Save to backend
-    const backendUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3001';
     try {
-      await fetch(`${backendUrl}/api/reply`, {
+      await fetch('/api/reply', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ answer })
@@ -96,12 +97,11 @@ export default function Home() {
     } catch (e) { console.error("Could not send reply."); }
   };
 
-  const triggerThinkingOfYou = () => {
-    if (socketRef.current) {
-        socketRef.current.emit('thinking_of_you');
-        // also burst locally
+  const triggerThinkingOfYou = async () => {
+    try {
+        await fetch('/api/burst', { method: 'POST' });
         window.dispatchEvent(new CustomEvent('burstParticles'));
-    }
+    } catch(e) {}
   };
 
   const toggleMusic = () => {
