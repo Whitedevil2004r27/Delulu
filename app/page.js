@@ -18,11 +18,17 @@ export default function Home() {
     // Autoplay fallback: start music on first screen interaction if native autoplay is blocked
     const playAudio = () => {
        if (audioRef.current) {
-           audioRef.current.play().catch(() => {});
+           audioRef.current.play()
+             .then(() => setMusicPlaying(true))
+             .catch((e) => console.log("Autoplay prevented, waiting for interaction..."));
            window.removeEventListener('click', playAudio);
+           window.removeEventListener('touchstart', playAudio);
+           window.removeEventListener('mousedown', playAudio);
        }
     };
     window.addEventListener('click', playAudio);
+    window.addEventListener('touchstart', playAudio);
+    window.addEventListener('mousedown', playAudio);
 
     // HTTP Polling Fallback for Burst Particles
     let lastKnownBurst = 0;
@@ -126,6 +132,15 @@ export default function Home() {
       
       {/* Ambient Audio */}
       <audio ref={audioRef} loop src="/puthu_mazha_bgm.mp3" autoPlay />
+
+      {/* Music Toggle Control */}
+      <button 
+        className={`music-toggle ${musicPlaying ? 'playing' : ''}`} 
+        onClick={toggleMusic}
+        aria-label="Toggle Music"
+      >
+        {musicPlaying ? '🔊' : '🔇'}
+      </button>
 
       {/* Secret Thinking of You trigger */}
       <div className="secret-trigger" onClick={triggerThinkingOfYou}></div>
