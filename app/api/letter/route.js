@@ -4,7 +4,7 @@ export function GET() {
     return NextResponse.json({
         hero: {
             label: "A little something from the heart",
-            heading: "For Delulu",
+            heading: "For My Delulu",
             subtitle: "Because some feelings do not need a label to be real"
         },
         letter: {

@@ -1,5 +1,5 @@
 export const metadata = {
-  title: 'For Delulu',
+  title: 'For My Delulu',
   description: 'A little something from the heart',
 };
 
