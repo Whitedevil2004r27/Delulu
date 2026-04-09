@@ -16,19 +16,16 @@ export default function Home() {
 
   useEffect(() => {
     // Autoplay fallback: start music on first screen interaction if native autoplay is blocked
+    const events = ['click', 'touchstart', 'mousedown', 'keydown', 'scroll', 'wheel'];
     const playAudio = () => {
        if (audioRef.current) {
            audioRef.current.play()
              .then(() => setMusicPlaying(true))
              .catch((e) => console.log("Autoplay prevented, waiting for interaction..."));
-           window.removeEventListener('click', playAudio);
-           window.removeEventListener('touchstart', playAudio);
-           window.removeEventListener('mousedown', playAudio);
+           events.forEach(e => window.removeEventListener(e, playAudio));
        }
     };
-    window.addEventListener('click', playAudio);
-    window.addEventListener('touchstart', playAudio);
-    window.addEventListener('mousedown', playAudio);
+    events.forEach(e => window.addEventListener(e, playAudio, { passive: true }));
 
     // HTTP Polling Fallback for Burst Particles
     let lastKnownBurst = 0;
