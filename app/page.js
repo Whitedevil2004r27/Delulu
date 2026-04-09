@@ -141,7 +141,7 @@ export default function Home() {
       <ThreeScene />
       
       {/* Ambient Audio */}
-      <audio ref={audioRef} loop src="/puthu_mazha_bgm.mp3" autoPlay />
+      <audio ref={audioRef} loop src="/my_new_song.mp3.mp3" autoPlay />
 
       {/* Music Toggle Control */}
       <button 
