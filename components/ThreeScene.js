@@ -70,7 +70,7 @@ export default function ThreeScene() {
             hearts.push(heart);
         }
 
-        // ROTATING 3D HEART IN CENTER
+        // ROTATING 3D ROSE/HEART IN CENTER
         const roseGroup = new THREE.Group();
         const roseMaterial = new THREE.MeshPhongMaterial({ color: 0x590d22, shininess: 100, side: THREE.DoubleSide });
         
@@ -92,20 +92,32 @@ export default function ThreeScene() {
         const ambientLight = new THREE.AmbientLight(0xfff0f3, 0.6);
         scene.add(ambientLight);
 
-        // GOLDEN STAR PARTICLES
-        const starsGeo = new THREE.BufferGeometry();
+        // GOLDEN STAR PARTICLES & CONSTELLATION MATH
         const starsCount = 60;
+        const starsGeo = new THREE.BufferGeometry();
         const posArray = new Float32Array(starsCount * 3);
+        const targetPosArray = new Float32Array(starsCount * 3);
         
-        for(let i = 0; i < starsCount * 3; i++) {
+        for(let i = 0; i < starsCount; i++) {
+            // Random Initial Position
             posArray[i * 3] = (Math.random() - 0.5) * 20;
             posArray[i * 3 + 1] = (Math.random() - 0.5) * 20;
             posArray[i * 3 + 2] = (Math.random() - 0.5) * 10 - 2;
+
+            // Target Heart Position for Constellation (Parametric Math)
+            const t = (i / starsCount) * Math.PI * 2;
+            const hx = 16 * Math.pow(Math.sin(t), 3);
+            const hy = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t);
+            
+            // Adjust scale and position
+            targetPosArray[i * 3] = hx * 0.15;
+            targetPosArray[i * 3 + 1] = hy * 0.15 + 1; // higher up physically
+            targetPosArray[i * 3 + 2] = -1; // Bring relatively forward
         }
         
         starsGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
         const starsMat = new THREE.PointsMaterial({
-            size: 0.04,
+            size: 0.05,
             color: 0xd4af37,
             transparent: true,
             opacity: 0.7
@@ -113,12 +125,46 @@ export default function ThreeScene() {
         const starParticles = new THREE.Points(starsGeo, starsMat);
         scene.add(starParticles);
 
-        // --- NEW: RAYCASTER & INTERACTIVITY ---
+        // Constellation Connecting Lines
+        const lineMat = new THREE.LineBasicMaterial({ color: 0xd4af37, transparent: true, opacity: 0 });
+        const lineGeo = new THREE.BufferGeometry();
+        lineGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const constellationLine = new THREE.LineLoop(lineGeo, lineMat); // LineLoop automatically connects back to start
+        scene.add(constellationLine);
+
+
+        // --- EXPLOSION PARTICLE SYSTEM ---
+        const explosions = [];
+        const createExplosion = (x, y, z) => {
+            const particleCount = 20;
+            const geo = new THREE.BufferGeometry();
+            const pos = new Float32Array(particleCount * 3);
+            const velocities = [];
+            for (let i = 0; i < particleCount; i++) {
+               pos[i*3] = x;
+               pos[i*3+1] = y;
+               pos[i*3+2] = z;
+               velocities.push({
+                   x: (Math.random() - 0.5) * 0.3,
+                   y: (Math.random() - 0.5) * 0.3,
+                   z: (Math.random() - 0.5) * 0.3
+               });
+            }
+            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+            const mat = new THREE.PointsMaterial({ color: 0xd4af37, size: 0.05, transparent: true, opacity: 1 });
+            const points = new THREE.Points(geo, mat);
+            scene.add(points);
+            explosions.push({ points, velocities, life: 1.0 });
+        };
+
+        // --- RAYCASTER & INTERACTIVITY ---
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2(-100, -100);
         let roseHovered = false;
         let roseClicks = 0;
         let easterEggActive = false;
+
+        const chimeAudio = new Audio('https://cdn.pixabay.com/download/audio/2021/08/04/audio_c6ccf3232f.mp3?filename=magic-chime-02-104316.mp3');
 
         const onMouseMove = (event) => {
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -127,14 +173,37 @@ export default function ThreeScene() {
 
         const onClick = () => {
              raycaster.setFromCamera(mouse, camera);
-             const intersects = raycaster.intersectObjects(roseGroup.children);
-             if (intersects.length > 0) {
+
+             // Check Catch a Heart Minigame
+             const heartIntersects = raycaster.intersectObjects(hearts);
+             if (heartIntersects.length > 0) {
+                 const clickedHeart = heartIntersects[0].object;
+                 if (clickedHeart.visible) {
+                     clickedHeart.visible = false;
+                     // Play magical chime (reset time to allow rapid clicking)
+                     chimeAudio.currentTime = 0;
+                     chimeAudio.play().catch(e => {});
+                     
+                     // Spawn explosion glitter
+                     createExplosion(clickedHeart.position.x, clickedHeart.position.y, clickedHeart.position.z);
+                     
+                     // Respawn heart at the bottom gracefully
+                     setTimeout(() => {
+                         clickedHeart.position.y = -7;
+                         clickedHeart.userData.baseX = (Math.random() - 0.5) * 16;
+                         clickedHeart.visible = true;
+                     }, 3000);
+                 }
+             }
+
+             // Check Central Rose
+             const roseIntersects = raycaster.intersectObjects(roseGroup.children);
+             if (roseIntersects.length > 0) {
                  roseClicks++;
                  if (roseClicks >= 3 && !easterEggActive) {
                      easterEggActive = true;
                      playEasterEggAnim();
                  }
-                 // small visual feedback on click
                  roseGroup.scale.set(1.1, 1.1, 1.1);
                  setTimeout(() => roseGroup.scale.set(0.6, 0.6, 0.6), 100);
              }
@@ -152,7 +221,7 @@ export default function ThreeScene() {
         window.addEventListener('click', onClick);
         window.addEventListener('touchstart', onTouchStart, { passive: false });
 
-        // --- BURST ANIMATION EVENT ---
+        // --- EVENTS ---
         let burstActive = false;
         let burstMultiplier = 1;
         const onBurstParticles = (e) => {
@@ -160,7 +229,6 @@ export default function ThreeScene() {
            burstActive = true;
            burstMultiplier = massive ? 15 : 6;
            
-           // Change all heart colors temporarily
            hearts.forEach(heart => {
                heart.material.color.setHex(massive ? 0xd4af37 : 0xffffff);
            });
@@ -168,7 +236,6 @@ export default function ThreeScene() {
            setTimeout(() => {
                burstActive = false;
                burstMultiplier = 1;
-               // restore colors
                hearts.forEach(heart => {
                     const color = new THREE.Color(heartColors[Math.floor(Math.random() * heartColors.length)]);
                     heart.material.color.set(color);
@@ -177,10 +244,16 @@ export default function ThreeScene() {
         };
         window.addEventListener('burstParticles', onBurstParticles);
 
+        // Constellation Trigger
+        let constellationActive = false;
+        const onDrawConstellation = () => {
+            constellationActive = true;
+        };
+        window.addEventListener('drawConstellation', onDrawConstellation);
+
         // --- EASTER EGG TEXT ---
         let hiddenText;
         const playEasterEggAnim = () => {
-            // HTML overlay for the secret message
             hiddenText = document.createElement('div');
             hiddenText.innerText = "You found the secret. Every beat is a thought of you.";
             hiddenText.style.position = 'fixed';
@@ -219,13 +292,13 @@ export default function ThreeScene() {
             animationFrameId = requestAnimationFrame(animate);
             const elapsedTime = clock.getElapsedTime();
 
-            // RAYCASTER UPDATE
             raycaster.setFromCamera(mouse, camera);
             const intersects = raycaster.intersectObjects(roseGroup.children);
             roseHovered = intersects.length > 0;
 
-            // Animate Hearts
+            // Animate Floating Hearts
             hearts.forEach(heart => {
+                if (!heart.visible) return; // Skip if exploded
                 let currentSpeed = heart.userData.baseSpeed;
                 if (burstActive) currentSpeed *= burstMultiplier;
                 
@@ -240,24 +313,54 @@ export default function ThreeScene() {
                 }
             });
 
-            // Animate Rose
-            const baseRotSpeedY = 0.005;
-            const baseRotSpeedX = 0.002;
-            const fastRotSpeedY = 0.05;
-            const fastRotSpeedX = 0.02;
+            // Animate Heart Explosions
+            for (let i = explosions.length - 1; i >= 0; i--) {
+                const exp = explosions[i];
+                exp.life -= 0.02; 
+                if (exp.life <= 0) {
+                    scene.remove(exp.points);
+                    exp.points.geometry.dispose();
+                    exp.points.material.dispose();
+                    explosions.splice(i, 1);
+                    continue;
+                }
+                const positions = exp.points.geometry.attributes.position.array;
+                for (let j = 0; j < 20; j++) {
+                    positions[j*3] += exp.velocities[j].x;
+                    positions[j*3+1] += exp.velocities[j].y;
+                    positions[j*3+2] += exp.velocities[j].z;
+                }
+                exp.points.geometry.attributes.position.needsUpdate = true;
+                exp.points.material.opacity = exp.life;
+            }
 
+            // Animate Central Body
             if (roseHovered || easterEggActive) {
-               roseGroup.rotation.y += fastRotSpeedY;
-               roseGroup.rotation.x += fastRotSpeedX;
-               // Make it pulse slightly
+               roseGroup.rotation.y += 0.05;
+               roseGroup.rotation.x += 0.02;
                roseMaterial.emissive.setHex(0x330011);
             } else {
-               roseGroup.rotation.y += baseRotSpeedY;
-               roseGroup.rotation.x += baseRotSpeedX;
+               roseGroup.rotation.y += 0.005;
+               roseGroup.rotation.x += 0.002;
                roseMaterial.emissive.setHex(0x000000);
             }
 
-            starsMat.opacity = 0.5 + Math.sin(elapsedTime * 2) * 0.3;
+            // Animate Constellation Stars
+            const positions = starsGeo.attributes.position.array;
+            if (constellationActive) {
+                for(let i = 0; i < starsCount * 3; i++) {
+                    positions[i] += (targetPosArray[i] - positions[i]) * 0.02;
+                }
+                starsGeo.attributes.position.needsUpdate = true;
+                lineGeo.attributes.position.needsUpdate = true;
+                
+                // Fade in connecting lines
+                if (lineMat.opacity < 0.6) lineMat.opacity += 0.005;
+                starsMat.opacity = 0.9;
+            } else {
+                // Subtle pulse before constellation forms
+                starsMat.opacity = 0.5 + Math.sin(elapsedTime * 2) * 0.3;
+            }
 
             renderer.render(scene, camera);
         }
@@ -279,6 +382,7 @@ export default function ThreeScene() {
             window.removeEventListener('click', onClick);
             window.removeEventListener('touchstart', onTouchStart);
             window.removeEventListener('burstParticles', onBurstParticles);
+            window.removeEventListener('drawConstellation', onDrawConstellation);
             cancelAnimationFrame(animationFrameId);
             if (hiddenText && document.body.contains(hiddenText)) {
                 hiddenText.remove();
@@ -293,9 +397,11 @@ export default function ThreeScene() {
             });
             starsGeo.dispose();
             starsMat.dispose();
+            lineMat.dispose();
+            lineGeo.dispose();
             renderer.dispose();
         };
     }, []);
 
-    return <div id="canvas-container" ref={mountRef}></div>;
+    return <div id="canvas-container" ref={mountRef} style={{ pointerEvents: 'auto', cursor: 'pointer' }}></div>;
 }

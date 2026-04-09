@@ -73,6 +73,12 @@ export default function Home() {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
+                
+                // Trigger Constellation formation when they reach the bottom section
+                if (entry.target.classList.contains('always-text')) {
+                    window.dispatchEvent(new CustomEvent('drawConstellation'));
+                }
+                
                 observer.unobserve(entry.target);
             }
         });
