@@ -220,11 +220,46 @@ section { position: relative; width: 100%; }
   transform: translateY(0);
 }
 
+/* --- RESPONSIVE DESIGN --- */
+
+/* Tablets (max-width: 1024px) */
+@media (max-width: 1024px) {
+  .card { padding: 4rem 3rem; }
+  .heading { font-size: clamp(4rem, 10vw, 8rem); }
+  .timeline-section { padding: 6rem 1rem; }
+}
+
+/* Smartphones (max-width: 768px) */
 @media (max-width: 768px) {
-  .card { padding: 3rem 2rem; }
-  .heading { font-size: 4.8rem; }
+  .hero { padding: 1rem; }
+  .card { padding: 3rem 1.5rem; }
+  .heading { font-size: 4rem; }
+  .subtitle { font-size: 1.3rem; }
   .always-text { font-size: 4.5rem; }
-  .letter-text p { font-size: 1.3rem; }
+  .letter-text p { font-size: 1.2rem; }
+  .quote-mark { font-size: 5rem; top: 0rem; left: 1rem; }
+  .signature { font-size: 2.5rem; margin-top: 2rem; }
+  
+  .timeline-item { padding-left: 50px; margin-bottom: 3rem; }
+  .timeline-dot { width: 20px; height: 20px; left: 16px; top: 20px; }
+  .timeline-title { font-size: 4rem; }
+  .timeline-heading { font-size: 1.8rem; }
+  .timeline-text { font-size: 1.1rem; }
+  
+  .reply-container { flex-direction: column; gap: 1.5rem; align-items: center; }
+  .reply-btn { width: 100%; max-width: 300px; padding: 1rem 0; font-size: 1.8rem; box-sizing: border-box; text-align: center; }
+  .reply-sent { font-size: 1.5rem; padding: 1.5rem; }
+  
+  .music-toggle { bottom: 15px; right: 15px; width: 45px; height: 45px; font-size: 20px; }
+}
+
+/* Small Smartphones (max-width: 480px) */
+@media (max-width: 480px) {
+  .heading { font-size: 3.2rem; }
+  .always-text { font-size: 3.2rem; }
+  .timeline-title { font-size: 3.2rem; }
+  .timeline-content { padding: 1.5rem !important; }
+  .label { font-size: 0.9rem; letter-spacing: 0.1em; }
 }
 
 /* --- NEW FEATURES STYLES --- */
