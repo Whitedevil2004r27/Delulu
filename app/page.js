@@ -95,7 +95,7 @@ export default function Home() {
     
     // Redirect to WhatsApp
     const message = encodeURIComponent(`I choose ${answer} 💖`);
-    window.open(`https://wa.me/948944410?text=${message}`, '_blank');
+    window.open(`https://wa.me/919488944410?text=${message}`, '_blank');
     
     // Save to backend
     try {
