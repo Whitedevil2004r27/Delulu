@@ -261,7 +261,7 @@ section { position: relative; width: 100%; }
   .reply-btn { width: 100%; max-width: 300px; padding: 1rem 0; font-size: 1.8rem; box-sizing: border-box; text-align: center; }
   .reply-sent { font-size: 1.5rem; padding: 1.5rem; }
   
-  .music-toggle { bottom: 15px; right: 15px; width: 45px; height: 45px; font-size: 20px; }
+  .music-toggle { display: none !important; }
 }
 
 /* Small Smartphones (max-width: 480px) */
