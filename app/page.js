@@ -93,6 +93,10 @@ export default function Home() {
     // Dispatch massive burst
     window.dispatchEvent(new CustomEvent('burstParticles', { detail: { massive: true } }));
     
+    // Redirect to WhatsApp
+    const message = encodeURIComponent(`I choose ${answer} 💖`);
+    window.open(`https://wa.me/948944410?text=${message}`, '_blank');
+    
     // Save to backend
     try {
       await fetch('/api/reply', {
