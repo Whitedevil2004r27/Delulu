@@ -1,0 +1,236 @@
+
+> delulu-frontend@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3001
+
+ ✓ Starting...
+ ✓ Ready in 2.6s
+ ○ Compiling / ...
+ ✓ Compiled / in 4.6s (465 modules)
+ GET / 200 in 5108ms
+ GET / 200 in 118ms
+ ○ Compiling /api/memories ...
+ ✓ Compiled /api/memories in 1160ms (255 modules)
+ ✓ Compiled (257 modules)
+ GET /api/memories 200 in 1750ms
+ GET /api/letter 200 in 1794ms
+ GET /api/memories 200 in 40ms
+ GET /api/letter 200 in 50ms
+ ✓ Compiled /api/burst in 480ms (259 modules)
+ GET /api/burst 200 in 653ms
+ GET /api/burst 200 in 51ms
+ GET /api/burst 200 in 50ms
+ GET /api/burst 200 in 46ms
+ GET /api/burst 200 in 54ms
+ GET /api/burst 200 in 46ms
+ GET /api/burst 200 in 46ms
+ GET /api/burst 200 in 29ms
+ GET /api/burst 200 in 28ms
+ GET /api/burst 200 in 42ms
+ GET /api/burst 200 in 43ms
+ GET /api/burst 200 in 17ms
+ GET /api/burst 200 in 35ms
+ GET /api/burst 200 in 18ms
+ GET /api/burst 200 in 23ms
+ GET /api/burst 200 in 20ms
+ GET /api/burst 200 in 22ms
+ GET /api/burst 200 in 15ms
+ GET /api/burst 200 in 18ms
+ GET /api/burst 200 in 17ms
+ GET /api/burst 200 in 15ms
+ GET /api/burst 200 in 20ms
+ GET /api/burst 200 in 14ms
+ GET /api/burst 200 in 15ms
+ GET /api/burst 200 in 17ms
+ GET /api/burst 200 in 21ms
+ GET /api/burst 200 in 13ms
+ GET /api/burst 200 in 21ms
+ GET /api/burst 200 in 15ms
+ GET /api/burst 200 in 21ms
+ GET /api/burst 200 in 46ms
+ GET /api/burst 200 in 16ms
+ GET /api/burst 200 in 16ms
+ GET /api/burst 200 in 14ms
+ GET /api/burst 200 in 23ms
+ GET /api/burst 200 in 15ms
+ GET /api/burst 200 in 19ms
+ GET /api/burst 200 in 22ms
+ GET /api/burst 200 in 17ms
+ GET /api/burst 200 in 18ms
+ GET /api/burst 200 in 16ms
+ GET /api/burst 200 in 21ms
+ GET /api/burst 200 in 20ms
+ GET /api/burst 200 in 25ms
+ GET /api/burst 200 in 22ms
+ GET /api/burst 200 in 21ms
+ GET /api/burst 200 in 20ms
+ GET /api/burst 200 in 19ms
+ GET /api/burst 200 in 19ms
+ GET /api/burst 200 in 23ms
+ GET /api/burst 200 in 21ms
+ GET /api/burst 200 in 21ms
+ GET /api/burst 200 in 21ms
+ GET /api/burst 200 in 12ms
+ GET /api/burst 200 in 33ms
+ ✓ Compiled /api/memories in 852ms (495 modules)
+ ✓ Compiled in 1ms (260 modules)
+ GET /api/letter 200 in 617ms
+ GET /api/memories 200 in 626ms
+ GET /api/letter 200 in 55ms
+ GET /api/memories 200 in 77ms
+ ✓ Compiled /_not-found in 298ms (489 modules)
+ GET /my_new_song.mp3 404 in 472ms
+ GET /api/burst 200 in 40ms
+ GET /api/burst 200 in 19ms
+ GET /api/burst 200 in 18ms
+ GET /api/burst 200 in 21ms
+ GET /api/burst 200 in 21ms
+ GET /api/burst 200 in 19ms
+ GET /api/burst 200 in 29ms
+ ✓ Compiled in 314ms (503 modules)
+ GET /api/burst 200 in 24ms
+ GET /api/burst 200 in 20ms
+ GET /api/burst 200 in 35ms
+ GET /api/burst 200 in 28ms
+ GET / 200 in 307ms
+ GET /api/letter 200 in 19ms
+ GET /api/memories 200 in 14ms
+ GET /api/letter 200 in 11ms
+ GET /api/memories 200 in 9ms
+ GET /my_new_song.mp3 404 in 71ms
+ GET /api/burst 200 in 134ms
+ GET /api/burst 200 in 15ms
+ ✓ Compiled in 935ms (503 modules)
+ GET /api/burst 200 in 34ms
+ GET / 200 in 449ms
+ GET /api/letter 200 in 45ms
+ GET /api/memories 200 in 52ms
+ GET /api/letter 200 in 56ms
+ GET /api/memories 200 in 56ms
+ GET /my_new_song.mp3 404 in 90ms
+ GET /api/burst 200 in 39ms
+ GET /api/burst 200 in 33ms
+ GET /api/burst 200 in 45ms
+ GET /api/burst 200 in 34ms
+ GET /api/burst 200 in 41ms
+ GET /api/burst 200 in 39ms
+ GET /api/burst 200 in 14ms
+ GET /api/burst 200 in 22ms
+ GET /api/burst 200 in 20ms
+ GET /api/burst 200 in 18ms
+ GET /api/burst 200 in 11ms
+ GET /api/burst 200 in 18ms
+ GET /api/burst 200 in 24ms
+ GET /api/burst 200 in 26ms
+ GET /api/burst 200 in 15ms
+ GET /api/burst 200 in 19ms
+ GET /api/burst 200 in 21ms
+ GET /api/burst 200 in 31ms
+ GET /api/burst 200 in 18ms
+ GET /api/burst 200 in 21ms
+ GET /api/burst 200 in 20ms
+ GET /api/burst 200 in 17ms
+ GET /api/burst 200 in 15ms
+ GET /api/burst 200 in 18ms
+ GET /api/burst 200 in 17ms
+ GET /api/burst 200 in 20ms
+ GET /api/burst 200 in 21ms
+ GET /api/burst 200 in 23ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 1953ms (711 modules)
+ GET /api/burst 404 in 2253ms
+ GET / 404 in 29ms
+ ✓ Compiled in 600ms (676 modules)
+ ✓ Compiled in 318ms (676 modules)
+ ✓ Compiled in 646ms (265 modules)
+ GET / 200 in 362ms
+ ✓ Compiled /api/memories in 255ms (296 modules)
+ ✓ Compiled (298 modules)
+ GET /api/memories 200 in 595ms
+ GET /api/letter 200 in 626ms
+ GET /api/memories 200 in 25ms
+ GET /api/letter 200 in 33ms
+ ✓ Compiled /api/burst in 269ms (300 modules)
+ GET /api/burst 200 in 411ms
+ GET /api/burst 200 in 25ms
+ GET /api/burst 200 in 16ms
+ GET /api/burst 200 in 23ms
+ GET /api/burst 200 in 14ms
+ GET /api/burst 200 in 18ms
+ GET /api/burst 200 in 15ms
+ GET /api/burst 200 in 21ms
+ GET /api/burst 200 in 20ms
+ GET /api/burst 200 in 31ms
+ GET /api/burst 200 in 27ms
+ GET /api/burst 200 in 27ms
+ GET /api/burst 200 in 31ms
+ GET /api/burst 200 in 39ms
+ GET /api/burst 200 in 43ms
+ GET /api/burst 200 in 39ms
+ GET /api/burst 200 in 31ms
+ GET /api/burst 200 in 32ms
+ GET /api/burst 200 in 38ms
+ GET /api/burst 200 in 14ms
+ GET /api/burst 200 in 22ms
+ GET /api/burst 200 in 18ms
+ GET /api/burst 200 in 28ms
+ GET /api/burst 200 in 42ms
+ GET /api/burst 200 in 30ms
+ GET /api/burst 200 in 17ms
+ GET /api/burst 200 in 21ms
+ GET /api/burst 200 in 18ms
+ GET /api/burst 200 in 18ms
+ GET /api/burst 200 in 21ms
+ GET /api/burst 200 in 18ms
+ GET /api/burst 200 in 19ms
+ GET /api/burst 200 in 28ms
+ GET /api/burst 200 in 31ms
+ GET /api/burst 200 in 35ms
+ GET /api/burst 200 in 35ms
+ GET /api/burst 200 in 20ms
+ GET /api/burst 200 in 32ms
+ GET /api/burst 200 in 32ms
+ GET /api/burst 200 in 32ms
+ GET /api/burst 200 in 28ms
+ GET /api/burst 200 in 34ms
+ GET /api/burst 200 in 46ms
+ GET /api/burst 200 in 27ms
+ GET /api/burst 200 in 30ms
+ GET /api/burst 200 in 26ms
+ GET /api/burst 200 in 26ms
+ GET /api/burst 200 in 32ms
+ GET /api/burst 200 in 33ms
+ GET /api/burst 200 in 30ms
+ GET /api/burst 200 in 29ms
+ GET /api/burst 200 in 30ms
+ GET /api/burst 200 in 30ms
+ GET /api/burst 200 in 34ms
+ GET /api/burst 200 in 42ms
+ GET /api/burst 200 in 36ms
+ GET /api/burst 200 in 33ms
+ GET /api/burst 200 in 44ms
+ GET /api/burst 200 in 32ms
+ GET /api/burst 200 in 34ms
+ GET /api/burst 200 in 23ms
+ GET /api/burst 200 in 28ms
+ GET /api/burst 200 in 28ms
+ GET /api/burst 200 in 41ms
+ GET /api/burst 200 in 50ms
+ GET /api/burst 200 in 26ms
+ GET /api/burst 200 in 26ms
+ GET /api/burst 200 in 35ms
+ GET /api/burst 200 in 21ms
+ GET /api/burst 200 in 19ms
+ GET /api/burst 200 in 22ms
+ ✓ Compiled in 206ms (295 modules)
+ ✓ Compiled in 212ms (295 modules)
+ ✓ Compiled in 440ms (676 modules)
+ ✓ Compiled in 420ms (676 modules)
+ ✓ Compiled in 271ms (676 modules)
+ ✓ Compiled in 247ms (676 modules)
+ ✓ Compiled in 284ms (676 modules)
+ ✓ Compiled in 367ms (676 modules)
+ ✓ Compiled in 384ms (690 modules)
+ ✓ Compiled in 365ms (690 modules)

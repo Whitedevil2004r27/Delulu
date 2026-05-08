@@ -8,11 +8,31 @@ export default function Home() {
   const [content, setContent] = useState(null);
   const [memories, setMemories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [musicPlaying, setMusicPlaying] = useState(false);
   const [replySent, setReplySent] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editForm, setEditForm] = useState({
+    letter: { paragraphs: [], signature: '' },
+    contact: { phoneNumber: '' },
+    audio: { songUrl: '' }
+  });
   
   const revealRefs = useRef([]);
   const audioRef = useRef(null);
+
+  const fetchContent = async () => {
+    try {
+      const res = await fetch('/api/letter');
+      const data = await res.json();
+      setContent(data);
+      setEditForm({
+        letter: { paragraphs: data.letter.paragraphs, signature: data.letter.signature },
+        contact: { phoneNumber: data.contact.phoneNumber },
+        audio: { songUrl: data.audio.songUrl }
+      });
+    } catch (err) {
+      console.error('Failed to fetch content:', err);
+    }
+  };
 
   useEffect(() => {
     // Autoplay fallback: start music on first screen interaction if native autoplay is blocked
@@ -20,7 +40,6 @@ export default function Home() {
     const playAudio = () => {
        if (audioRef.current) {
            audioRef.current.play()
-             .then(() => setMusicPlaying(true))
              .catch((e) => console.log("Autoplay prevented, waiting for interaction..."));
            events.forEach(e => window.removeEventListener(e, playAudio));
        }
@@ -44,11 +63,10 @@ export default function Home() {
 
     // Fetch letter content and memories
     Promise.all([
-      fetch('/api/letter').then(res => res.json()),
+      fetchContent(),
       fetch('/api/memories').then(res => res.json())
     ])
-    .then(([letterData, memoriesData]) => {
-      setContent(letterData);
+    .then(([_, memoriesData]) => {
       setMemories(memoriesData);
       setLoading(false);
     })
@@ -61,6 +79,13 @@ export default function Home() {
       clearInterval(pollInterval);
     };
   }, []);
+
+  useEffect(() => {
+    if (loading || !audioRef.current) return;
+
+    audioRef.current.play()
+      .catch((e) => console.log("Autoplay prevented, waiting for interaction..."));
+  }, [loading]);
 
   useEffect(() => {
     if (loading) return;
@@ -98,7 +123,8 @@ export default function Home() {
     
     // Redirect to WhatsApp
     const message = encodeURIComponent(`I choose ${answer} 💖`);
-    window.open(`https://wa.me/919488944410?text=${message}`, '_blank');
+    const phoneNumber = content?.contact?.phoneNumber ?? '919488944410';
+    window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
     
     // Save to backend
     try {
@@ -117,15 +143,40 @@ export default function Home() {
     } catch(e) {}
   };
 
-  const toggleMusic = () => {
-    if (!audioRef.current) return;
-    if (musicPlaying) {
-      audioRef.current.pause();
-      setMusicPlaying(false);
-    } else {
-      audioRef.current.play();
-      setMusicPlaying(true);
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('/api/update-content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editForm)
+      });
+      if (response.ok) {
+        await fetchContent(); // Refetch content
+        setShowEditModal(false);
+        alert('Content updated successfully!');
+      } else {
+        alert('Failed to update content');
+      }
+    } catch (error) {
+      console.error('Error updating content:', error);
+      alert('Error updating content');
     }
+  };
+
+  const handleParagraphChange = (index, value) => {
+    const newParagraphs = [...editForm.letter.paragraphs];
+    newParagraphs[index] = value;
+    setEditForm({ ...editForm, letter: { ...editForm.letter, paragraphs: newParagraphs } });
+  };
+
+  const addParagraph = () => {
+    setEditForm({ ...editForm, letter: { ...editForm.letter, paragraphs: [...editForm.letter.paragraphs, ''] } });
+  };
+
+  const removeParagraph = (index) => {
+    const newParagraphs = editForm.letter.paragraphs.filter((_, i) => i !== index);
+    setEditForm({ ...editForm, letter: { ...editForm.letter, paragraphs: newParagraphs } });
   };
 
   if (loading) {
@@ -137,17 +188,83 @@ export default function Home() {
     <>
       <ThreeScene />
       
-      {/* Ambient Audio */}
-      <audio ref={audioRef} loop src="/my_new_song.mp3.mp3" autoPlay />
-
-      {/* Music Toggle Control */}
+      {/* Edit Button */}
       <button 
-        className={`music-toggle ${musicPlaying ? 'playing' : ''}`} 
-        onClick={toggleMusic}
-        aria-label="Toggle Music"
+        className="edit-btn" 
+        onClick={() => setShowEditModal(true)}
+        title="Edit Content"
       >
-        {musicPlaying ? '🔊' : '🔇'}
+        ✏️
       </button>
+
+      {/* Edit Modal */}
+      {showEditModal && (
+        <div className="modal-overlay" onClick={() => setShowEditModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>Edit Content</h2>
+            <form onSubmit={handleEditSubmit}>
+              <div className="form-group">
+                <label>Letter Paragraphs:</label>
+                {editForm.letter.paragraphs.map((para, index) => (
+                  <div key={index} className="paragraph-group">
+                    <textarea
+                      value={para}
+                      onChange={(e) => handleParagraphChange(index, e.target.value)}
+                      placeholder={`Paragraph ${index + 1}`}
+                      rows={3}
+                    />
+                    <button type="button" onClick={() => removeParagraph(index)} className="remove-btn">Remove</button>
+                  </div>
+                ))}
+                <button type="button" onClick={addParagraph} className="add-btn">Add Paragraph</button>
+              </div>
+              
+              <div className="form-group">
+                <label>Letter Signature:</label>
+                <input
+                  type="text"
+                  value={editForm.letter.signature}
+                  onChange={(e) => setEditForm({ ...editForm, letter: { ...editForm.letter, signature: e.target.value } })}
+                />
+              </div>
+              
+              <div className="form-group">
+                <label>Phone Number:</label>
+                <input
+                  type="text"
+                  value={editForm.contact.phoneNumber}
+                  onChange={(e) => setEditForm({ ...editForm, contact: { phoneNumber: e.target.value } })}
+                />
+              </div>
+              
+              <div className="form-group">
+                <label>Background Song URL:</label>
+                <input
+                  type="text"
+                  value={editForm.audio.songUrl}
+                  onChange={(e) => setEditForm({ ...editForm, audio: { songUrl: e.target.value } })}
+                />
+              </div>
+              
+              <div className="modal-actions">
+                <button type="button" onClick={() => setShowEditModal(false)}>Cancel</button>
+                <button type="submit">Save Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Ambient Audio */}
+      <audio 
+        ref={audioRef} 
+        loop 
+        src={content.audio.songUrl} 
+        autoPlay 
+        playsInline 
+        preload="auto"
+        onError={() => console.log('Audio failed to load')}
+      />
 
       {/* Secret Thinking of You trigger */}
       <div className="secret-trigger" onClick={triggerThinkingOfYou}></div>
